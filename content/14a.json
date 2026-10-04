@@ -1,0 +1,92 @@
+{
+  "id": "14a",
+  "title": "系统设计基础",
+  "subtitle": "用需求和故障模型理解负载均衡、数据库、CAP、缓存与分片。",
+  "group": "Java 与设计",
+  "source": "14-design-part-1.pdf",
+  "sourcePages": 23,
+  "topics": [
+    "设计方法",
+    "负载均衡",
+    "SQL 与 NoSQL",
+    "CAP",
+    "缓存与 CDN",
+    "分片"
+  ],
+  "problems": [],
+  "coverage": [
+    {
+      "pages": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "section": "系统设计要回答什么"
+    },
+    {
+      "pages": [
+        6
+      ],
+      "section": "可扩展性、可靠性与可用性"
+    },
+    {
+      "pages": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "section": "负载均衡：把请求交给合适的健康节点"
+    },
+    {
+      "pages": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "section": "SQL 与 NoSQL：先看数据与访问方式"
+    },
+    {
+      "pages": [
+        16,
+        17
+      ],
+      "section": "CAP：在网络分区时决定优先保证什么"
+    },
+    {
+      "pages": [
+        18
+      ],
+      "section": "缓存、CDN 与失效策略"
+    },
+    {
+      "pages": [
+        19
+      ],
+      "section": "Redis 与 Memcached"
+    },
+    {
+      "pages": [
+        20
+      ],
+      "section": "CDN 的边缘缓存"
+    },
+    {
+      "pages": [
+        21
+      ],
+      "section": "四类读写路径"
+    },
+    {
+      "pages": [
+        22,
+        23
+      ],
+      "section": "分片：把数据所有权分给不同节点"
+    }
+  ]
+}

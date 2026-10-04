@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f8f8f4">
+  <meta name="description" content="从递归、数据结构到 Java、网络与操作系统。逐页整理的中文课程讲义、完整题解、代码细读与交互演示。">
+  <title>CS Notes · 计算机学习笔记</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <aside id="sidebar" aria-label="课程导航"></aside>
+  <div id="veil" class="veil" hidden></div>
+  <div class="workspace">
+    <header class="topbar"><button id="menu-toggle" class="icon-button mobile-only" aria-label="打开课程导航">☰</button><div id="breadcrumb">计算机学习笔记</div><button id="search-open" class="search-open"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><span>搜索知识点、题目</span><kbd>⌘ K</kbd></button></header>
+    <main id="main" tabindex="-1"><div class="loading">正在打开讲义…</div></main>
+    <footer class="site-footer"><span>CS NOTES <span class="dot">·</span> 理解原理，动手验证</span><a href="#/sources">课件与内容对照</a><span>学习进度保存在当前浏览器</span></footer>
+  </div>
+  <dialog id="search-dialog" aria-label="搜索课程"><div class="search-input-row"><input id="search-input" type="search" placeholder="搜索递归、HashMap、LC 200…" aria-label="搜索知识点或题目" autocomplete="off"><button id="search-close" class="text-button" aria-label="关闭搜索">Esc</button></div><div id="search-results" aria-live="polite"></div><div class="search-hint">覆盖所有章节正文与题目 · 点击结果跳转到对应讲解</div></dialog>
+  <dialog id="image-dialog" aria-label="课件大图"><button class="image-close icon-button" aria-label="关闭大图">✕</button><img alt="课件页面放大图"></dialog>
+  <div id="toast" role="status"></div>
+</body>
+</html>

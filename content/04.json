@@ -1,0 +1,286 @@
+{
+  "id": "04",
+  "title": "动态规划",
+  "subtitle": "从重复子问题到网格、背包、子序列与博弈",
+  "group": "算法基础",
+  "source": "04-dynamic-programming.pdf",
+  "sourcePages": 59,
+  "topics": [
+    "状态与最优子结构",
+    "记忆化和自底向上",
+    "滚动数组与更新方向",
+    "0–1背包与无限背包",
+    "LIS与LCS",
+    "区间前缀状态",
+    "计数与大整数",
+    "反向DP",
+    "位掩码博弈"
+  ],
+  "problems": [
+    {
+      "id": "LC 509",
+      "title": "Fibonacci Number",
+      "anchor": "lc-509",
+      "url": "https://leetcode.com/problems/fibonacci-number/"
+    },
+    {
+      "id": "LC 62",
+      "title": "Unique Paths",
+      "anchor": "lc-62",
+      "url": "https://leetcode.com/problems/unique-paths/"
+    },
+    {
+      "id": "LC 64",
+      "title": "Minimum Path Sum",
+      "anchor": "lc-64",
+      "url": "https://leetcode.com/problems/minimum-path-sum/"
+    },
+    {
+      "id": "课堂题",
+      "title": "0–1背包最大价值",
+      "anchor": "knapsack-value"
+    },
+    {
+      "id": "LC 322",
+      "title": "Coin Change",
+      "anchor": "lc-322",
+      "url": "https://leetcode.com/problems/coin-change/"
+    },
+    {
+      "id": "LC 300",
+      "title": "Longest Increasing Subsequence",
+      "anchor": "lc-300",
+      "url": "https://leetcode.com/problems/longest-increasing-subsequence/"
+    },
+    {
+      "id": "LC 1143",
+      "title": "Longest Common Subsequence",
+      "anchor": "lc-1143",
+      "url": "https://leetcode.com/problems/longest-common-subsequence/"
+    },
+    {
+      "id": "LC 198",
+      "title": "House Robber",
+      "anchor": "lc-198",
+      "url": "https://leetcode.com/problems/house-robber/"
+    },
+    {
+      "id": "LC 53",
+      "title": "Maximum Subarray",
+      "anchor": "lc-53",
+      "url": "https://leetcode.com/problems/maximum-subarray/"
+    },
+    {
+      "id": "LC 120",
+      "title": "Triangle",
+      "anchor": "lc-120",
+      "url": "https://leetcode.com/problems/triangle/"
+    },
+    {
+      "id": "LC 97",
+      "title": "Interleaving String",
+      "anchor": "lc-97",
+      "url": "https://leetcode.com/problems/interleaving-string/"
+    },
+    {
+      "id": "LC 213",
+      "title": "House Robber II",
+      "anchor": "lc-213",
+      "url": "https://leetcode.com/problems/house-robber-ii/"
+    },
+    {
+      "id": "LC 115",
+      "title": "Distinct Subsequences",
+      "anchor": "lc-115",
+      "url": "https://leetcode.com/problems/distinct-subsequences/"
+    },
+    {
+      "id": "LC 174",
+      "title": "Dungeon Game",
+      "anchor": "lc-174",
+      "url": "https://leetcode.com/problems/dungeon-game/"
+    },
+    {
+      "id": "LC 474",
+      "title": "Ones and Zeroes",
+      "anchor": "lc-474",
+      "url": "https://leetcode.com/problems/ones-and-zeroes/"
+    },
+    {
+      "id": "LC 221",
+      "title": "Maximal Square",
+      "anchor": "lc-221",
+      "url": "https://leetcode.com/problems/maximal-square/"
+    },
+    {
+      "id": "LC 464",
+      "title": "Can I Win",
+      "anchor": "lc-464",
+      "url": "https://leetcode.com/problems/can-i-win/"
+    }
+  ],
+  "coverage": [
+    {
+      "pages": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "section": "从重复递归到动态规划"
+    },
+    {
+      "pages": [
+        6,
+        7,
+        8
+      ],
+      "section": "LC 509 · Fibonacci：先统一边界"
+    },
+    {
+      "pages": [
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "section": "LC 62 · Unique Paths：由最后一步划分计数"
+    },
+    {
+      "pages": [
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "section": "LC 64 · Minimum Path Sum：把相加的计数换成最小代价"
+    },
+    {
+      "pages": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "section": "课堂题 · 0–1 背包最大价值"
+    },
+    {
+      "pages": [
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "section": "LC 322 · Coin Change：无限次取用与不可达状态"
+    },
+    {
+      "pages": [
+        34,
+        35,
+        36,
+        37
+      ],
+      "section": "从重复递归到动态规划"
+    },
+    {
+      "pages": [
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "section": "LC 300 · 最长严格递增子序列"
+    },
+    {
+      "pages": [
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57
+      ],
+      "section": "LC 1143 · 最长公共子序列"
+    },
+    {
+      "pages": [
+        58
+      ],
+      "section": "作业 LC 198 · House Robber"
+    },
+    {
+      "pages": [
+        58
+      ],
+      "section": "作业 LC 53 · Maximum Subarray"
+    },
+    {
+      "pages": [
+        58
+      ],
+      "section": "作业 LC 120 · Triangle"
+    },
+    {
+      "pages": [
+        58
+      ],
+      "section": "作业 LC 97 · Interleaving String"
+    },
+    {
+      "pages": [
+        58
+      ],
+      "section": "作业 LC 213 · House Robber II"
+    },
+    {
+      "pages": [
+        59
+      ],
+      "section": "选做 LC 115 · Distinct Subsequences"
+    },
+    {
+      "pages": [
+        59
+      ],
+      "section": "选做 LC 174 · Dungeon Game"
+    },
+    {
+      "pages": [
+        59
+      ],
+      "section": "选做 LC 474 · Ones and Zeroes"
+    },
+    {
+      "pages": [
+        59
+      ],
+      "section": "选做 LC 221 · Maximal Square"
+    },
+    {
+      "pages": [
+        59
+      ],
+      "section": "选做 LC 464 · Can I Win：状态压缩博弈"
+    }
+  ]
+}

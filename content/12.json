@@ -1,0 +1,100 @@
+{
+  "id": "12",
+  "title": "位运算与状态压缩",
+  "subtitle": "补码、奇偶前缀、子集与最小团队",
+  "group": "数据结构",
+  "source": "12-bit-manipulation.pdf",
+  "sourcePages": 21,
+  "topics": [
+    "位运算：把状态放进二进制",
+    "课件提及练习 · 用位掩码枚举子集与固定大小组合",
+    "LC 136 · 只出现一次的数字",
+    "LC 191 · 位1的个数"
+  ],
+  "problems": [
+    {
+      "id": "LC 136",
+      "title": "只出现一次的数字",
+      "anchor": "lc-136"
+    },
+    {
+      "id": "LC 191",
+      "title": "位1的个数",
+      "anchor": "lc-191"
+    },
+    {
+      "id": "LC 190",
+      "title": "颠倒二进制位",
+      "anchor": "lc-190"
+    },
+    {
+      "id": "LC 1371",
+      "title": "每个元音出现偶数次的最长子串",
+      "anchor": "lc-1371"
+    },
+    {
+      "id": "LC 1125",
+      "title": "最小的必要团队",
+      "anchor": "lc-1125",
+      "url": "https://leetcode.com/problems/smallest-sufficient-team/"
+    },
+    {
+      "id": "课堂练习",
+      "title": "用位掩码枚举子集与固定大小组合",
+      "anchor": "bit-subsets"
+    }
+  ],
+  "coverage": [
+    {
+      "pages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "section": "位运算：把状态放进二进制"
+    },
+    {
+      "pages": [
+        9
+      ],
+      "section": "课件提及练习 · 用位掩码枚举子集与固定大小组合"
+    },
+    {
+      "pages": [
+        10,
+        11
+      ],
+      "section": "LC 136 · 只出现一次的数字"
+    },
+    {
+      "pages": [
+        12,
+        13
+      ],
+      "section": "LC 191 · 位1的个数"
+    },
+    {
+      "pages": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "section": "LC 1371 · 每个元音出现偶数次的最长子串"
+    },
+    {
+      "pages": [
+        18,
+        19,
+        20,
+        21
+      ],
+      "section": "LC 1125 · 最小的必要团队"
+    }
+  ]
+}

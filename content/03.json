@@ -1,0 +1,275 @@
+{
+  "id": "03",
+  "title": "广度优先搜索",
+  "subtitle": "分层队列、单词变换与滚动迷宫最短路",
+  "group": "算法基础",
+  "source": "03-bfs.pdf",
+  "sourcePages": 113,
+  "topics": [
+    "FIFO队列与层边界",
+    "二叉树层序及锯齿遍历",
+    "无权图最短路",
+    "网格坐标编码",
+    "Dijkstra与带权滚动迷宫",
+    "字典序最短路径",
+    "Word Ladder前驱DAG",
+    "多源BFS与连通块"
+  ],
+  "problems": [
+    {
+      "id": "LC 102",
+      "title": "Binary Tree Level Order Traversal",
+      "anchor": "lc-102",
+      "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
+    },
+    {
+      "id": "LC 103",
+      "title": "Binary Tree Zigzag Level Order Traversal",
+      "anchor": "lc-103",
+      "url": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/"
+    },
+    {
+      "id": "LC 513",
+      "title": "Find Bottom Left Tree Value",
+      "anchor": "lc-513",
+      "url": "https://leetcode.com/problems/find-bottom-left-tree-value/"
+    },
+    {
+      "id": "LC 111",
+      "title": "Minimum Depth of Binary Tree（BFS）",
+      "anchor": "lc-111",
+      "url": "https://leetcode.com/problems/minimum-depth-of-binary-tree/"
+    },
+    {
+      "id": "课堂题",
+      "title": "Simple Maze / 最少步数",
+      "anchor": "maze-bfs"
+    },
+    {
+      "id": "LC 505",
+      "title": "The Maze II",
+      "anchor": "lc-505",
+      "url": "https://leetcode.com/problems/the-maze-ii/"
+    },
+    {
+      "id": "LC 499",
+      "title": "The Maze III",
+      "anchor": "lc-499",
+      "url": "https://leetcode.com/problems/the-maze-iii/"
+    },
+    {
+      "id": "LC 127",
+      "title": "Word Ladder",
+      "anchor": "lc-127",
+      "url": "https://leetcode.com/problems/word-ladder/"
+    },
+    {
+      "id": "LC 126",
+      "title": "Word Ladder II",
+      "anchor": "lc-126",
+      "url": "https://leetcode.com/problems/word-ladder-ii/"
+    },
+    {
+      "id": "LC 130",
+      "title": "Surrounded Regions",
+      "anchor": "lc-130",
+      "url": "https://leetcode.com/problems/surrounded-regions/"
+    },
+    {
+      "id": "LC 200",
+      "title": "Number of Islands",
+      "anchor": "lc-200",
+      "url": "https://leetcode.com/problems/number-of-islands/"
+    }
+  ],
+  "coverage": [
+    {
+      "pages": [
+        1,
+        2
+      ],
+      "section": "BFS 的承诺：按步数从小到大扩展"
+    },
+    {
+      "pages": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "section": "Java Queue、Deque 和层的边界"
+    },
+    {
+      "pages": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
+      ],
+      "section": "LC 102 · Binary Tree Level Order Traversal"
+    },
+    {
+      "pages": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "section": "LC 103 · Binary Tree Zigzag Level Order Traversal"
+    },
+    {
+      "pages": [
+        33,
+        34,
+        35,
+        36
+      ],
+      "section": "LC 513 · Find Bottom Left Tree Value"
+    },
+    {
+      "pages": [
+        37
+      ],
+      "section": "Java Queue、Deque 和层的边界"
+    },
+    {
+      "pages": [
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46
+      ],
+      "section": "LC 111 · Minimum Depth：第一次遇到叶子即可结束"
+    },
+    {
+      "pages": [
+        47
+      ],
+      "section": "Java Queue、Deque 和层的边界"
+    },
+    {
+      "pages": [
+        48,
+        49,
+        50,
+        51
+      ],
+      "section": "课堂题 · Simple Maze：从可达性到最少步数"
+    },
+    {
+      "pages": [
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58
+      ],
+      "section": "LC 505 · The Maze II：滚动距离是边权"
+    },
+    {
+      "pages": [
+        59,
+        60,
+        61,
+        62,
+        63,
+        64
+      ],
+      "section": "LC 499 · The Maze III：距离相同时比较路径字符串"
+    },
+    {
+      "pages": [
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87
+      ],
+      "section": "LC 127 · Word Ladder：把字典看成隐式图"
+    },
+    {
+      "pages": [
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104
+      ],
+      "section": "LC 126 · Word Ladder II：保存全部最短前驱"
+    },
+    {
+      "pages": [
+        105,
+        106
+      ],
+      "section": "BFS、DFS 与带权最短路的选择"
+    },
+    {
+      "pages": [
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113
+      ],
+      "section": "LC 130 · Surrounded Regions：从边界救出安全区域"
+    }
+  ]
+}
