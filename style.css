@@ -49,3 +49,43 @@
 }
 .diagram-viewport img { display: block; height: auto; max-width: none; margin: auto; }
 @media print { .diagram figcaption { display: none; } }
+
+.code-pair .code-top { min-height: 40px; }
+.prose .code-pair pre { font: 13px/1.65 var(--mono); }
+.prose .code-pair pre code { padding: 0; overflow: visible; }
+@media (max-width: 700px) {
+  .code-pair .code-tabs button, .code-pair .copy-button { min-height: 34px; }
+}
+.code-tabs { display: flex; gap: 3px; }
+.code-tabs button {
+  padding: 5px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #59694f;
+  font: 12px/1.5 var(--mono);
+}
+.code-tabs button[aria-selected="true"] {
+  border-color: #c6d4bc;
+  background: white;
+  color: var(--accent);
+  font-weight: 650;
+}
+.code-pair [hidden] { display: none; }
+.template-links {
+  margin: 0 0 24px;
+  padding: 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--accent);
+  font-size: 13px;
+}
+.template-links summary { cursor: pointer; }
+.template-links ul { padding-left: 20px; }
+.template-links li + li { margin-top: 6px; }
+.template-links a { text-decoration: underline; text-underline-offset: 3px; }
+.prose a[id^="tpl-"] { display: block; }
+@media print {
+  .template-links, .code-pair .code-top { display: none; }
+  .code-pair pre[hidden] { display: block; }
+  .code-pair pre::before { content: attr(data-language); display: block; font-weight: bold; }
+}

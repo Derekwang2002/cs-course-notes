@@ -4,7 +4,8 @@
 
 - 1,068 页原始课件逐页浏览，并映射到讲解章节。
 - 详细题意、推导、执行状态表、Java 实现、非基础语法/API、边界和复杂度。
-- 课程总览、全文检索、题目索引、Java 语法手册。
+- 课程总览、全文检索、题目索引、双语语法手册。
+- 讲义中的常用模板提供 Python / Java 标签页。展开「本页代码模板」可直接定位，复制按钮取当前语言的代码。
 - BFS、递归调用栈、硬币兑换 DP、自底向上建堆交互演示。
 - 概念图与时序图按阅读位置加载，支持放大、缩放和滚动查看；学习进度只保存在浏览器本地。
 
@@ -26,9 +27,9 @@ npm run dev
 - `content/*.md`：各章讲义。题目用显式 HTML anchor。
 - `content/*.json`：来源、页数、题目索引和逐页覆盖映射。
 - `assets/slides/<章节>/<页码>.jpg`：原课件渲染图。
-- `syntax.md`：Java 非基础语法手册。
+- `syntax.md`：非基础语法与双语数据结构示例。
 - `app.js`、`labs.js`、`style.css`：网站与交互演示。
-- `scripts/check.mjs`：检查逐页覆盖、图像、题目锚点、章节链接。
+- `scripts/check.mjs`：检查逐页覆盖、图像、题目锚点、章节链接和双语模板围栏。
 
 章节编号沿用原文件：14 分成 14a/14b，原文件夹没有16。跨章节同题保留各章的教学位置，首页的题目数是讲解条目数，不是去重后的 LeetCode 数量。
 
@@ -50,8 +51,9 @@ npm run dev
 npx playwright install chromium
 # 另一个终端先启动 npm run dev
 npm run test:browser
+node scripts/template-browser-check.mjs
 ```
 
 若复用已安装的 Chromium，可设置 `PLAYWRIGHT_CHROMIUM_EXECUTABLE`。自动测试结果与截图写入 `.test-output/`，不进入发布目录。
 
-本次整理另对各章节完整 Java 程序做了编译、样例与边界测试，树形DP采用穷举摄像头方案对照，Trie/Word Search采用独立查找对照，BST生成检查唯一性和节点共享，恢复BST检查不同交换位置。网站提供代码阅读与复制，不在浏览器内执行任意Java代码。
+双语模板使用同一组输入在 Python 与 Java 中核对预期结果；需要平台节点或驱动的解法单独补齐调用环境。各章完整 Java 程序另做了编译、样例与边界测试，树形DP采用穷举摄像头方案对照，Trie/Word Search采用独立查找对照，BST生成检查唯一性和节点共享，恢复BST检查不同交换位置。网站提供代码阅读与复制，不在浏览器内执行任意Java代码。

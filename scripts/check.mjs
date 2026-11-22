@@ -1,9 +1,32 @@
 import fs from 'node:fs/promises';
 import {marked} from 'marked';
-const errors=[],stats={chapters:0,pages:0,problems:0,diagrams:0,javaBlocks:0,characters:0};
+import {readTemplates} from '../templates.js';
+
+function checkTemplates(source, body) {
+  const declared = readTemplates(body);
+  const anchors = [...body.matchAll(/<a id="(tpl-[^"]+)"><\/a>/g)];
+  if (anchors.length !== declared.length || new Set(declared.map(t => t.anchor)).size !== anchors.length) {
+    errors.push(source + ': template anchors must be unique and have a bold caption');
+  }
+  for (const [i, anchor] of anchors.entries()) {
+    const start = anchor.index + anchor[0].length;
+    const stop = anchors[i + 1]?.index ?? body.length;
+    const tokens = marked.lexer(body.slice(start, stop)).filter(t => t.type !== 'space');
+    const fence = tokens.findIndex(t => t.type === 'code');
+    const first = tokens[fence];
+    const second = tokens[fence + 1];
+    if (fence === -1 || tokens.slice(0, fence).some(t => t.type === 'heading') ||
+        second?.type !== 'code' || [first?.lang, second?.lang].sort().join('/') !== 'java/python') {
+      errors.push(source + ': missing adjacent Python and Java examples at ' + anchor[1]);
+    }
+  }
+  stats.bilingualTemplates += anchors.length;
+}
+const errors=[],stats={chapters:0,pages:0,problems:0,diagrams:0,javaBlocks:0,characters:0,bilingualTemplates:0};
 const exists=async p=>{try{await fs.access(p);return true}catch{return false}};
 for(const file of (await fs.readdir('content')).filter(f=>f.endsWith('.json')).sort()){
  const m=JSON.parse(await fs.readFile('content/'+file,'utf8'));const name='content/'+m.id+'.md';if(!await exists(name)){errors.push(`${m.id}: missing markdown`);continue}const body=await fs.readFile(name,'utf8');const tokens=marked.lexer(body);const headings=tokens.filter(t=>t.type==='heading').map(t=>t.text.replace(/[`*_]/g,''));const anchors=[...body.matchAll(/<a\s+id="([^"]+)"/g)].map(x=>x[1]);stats.chapters++;stats.pages+=m.sourcePages;stats.problems+=m.problems.length;stats.characters+=body.length;stats.diagrams+=tokens.filter(t=>t.type==='code'&&t.lang==='mermaid').length;stats.javaBlocks+=tokens.filter(t=>t.type==='code'&&t.lang==='java').length;
+ checkTemplates(name, body);
  for (const [title, anchor] of Object.entries(m.conceptAnchors || {})) {
    if (!headings.includes(title)) errors.push(`${m.id}: concept heading absent: ${title}`);
    if (!/^concept-[a-z0-9-]+$/.test(anchor)) errors.push(`${m.id}: invalid concept anchor: ${anchor}`);
@@ -15,4 +38,5 @@ for(const file of (await fs.readdir('content')).filter(f=>f.endsWith('.json')).s
  for(const c of m.coverage){if(c.pages.some(p=>p<1||p>m.sourcePages))errors.push(`${m.id}: invalid coverage page`);if(c.anchor&&!anchors.includes(c.anchor))errors.push(`${m.id}: coverage invalid anchor ${c.anchor}`);else if(!c.anchor&&!headings.includes(c.section.replace(/[`*_]/g,'')))errors.push(`${m.id}: coverage title absent: ${c.section}`)}
  for(const a of [...body.matchAll(/\]\(#\/lesson\/([^)?]+)(?:\?section=([^)]*))?\)/g)]){const targetFile='content/'+a[1]+'.md';if(!await exists(targetFile)){errors.push(`${m.id}: broken chapter ${a[1]}`);continue}if(a[2]){const target=await fs.readFile(targetFile,'utf8');const targetMeta=JSON.parse(await fs.readFile('content/'+a[1]+'.json','utf8'));if(!Object.values(targetMeta.conceptAnchors||{}).includes(decodeURIComponent(a[2]))&&!target.includes(`id="${decodeURIComponent(a[2])}"`)&&!a[2].startsWith('section-'))errors.push(`${m.id}: broken target ${a[1]} ${a[2]}`)}}
 }
+checkTemplates('syntax.md', await fs.readFile('syntax.md', 'utf8'));
 console.log(JSON.stringify(stats,null,2));if(errors.length){console.error(errors.join('\n'));process.exitCode=1}else console.log('All coverage, slide assets, anchors and cross-chapter links valid.');

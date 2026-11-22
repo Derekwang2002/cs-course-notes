@@ -1,3 +1,4 @@
+import {readTemplates} from '../templates.js';
 import fs from 'node:fs/promises';import path from 'node:path';import {build} from 'esbuild';import {marked} from 'marked';
 const root=process.cwd(),out=path.join(root,'dist');await fs.mkdir(out,{recursive:true});await fs.mkdir(path.join(out,'content'),{recursive:true});
 const files=(await fs.readdir('content')).filter(f=>f.endsWith('.json')).sort(),index=[],search=[];
@@ -14,10 +15,18 @@ for(const file of files){
    ...item,
    anchor: item.anchor || sectionIds[headingList.indexOf(item.section.replace(/[`*_]/g, ''))]
  }));
+ indexTemplates(meta.id, meta.title, body);
  index.push({...meta, characters: body.length});
- await fs.writeFile(path.join(out, 'content', meta.id + '.json'), JSON.stringify({...meta, body, sectionIds}));
- let part=null,section=0,lastAnchor='';for(const token of tokens){if(token.type==='html'){const a=token.text.match(/<a\s+id="([^"]+)"/);if(a)lastAnchor=a[1]}if(token.type==='heading'){if(part)search.push(part);const anchor=sectionIds[section++];part={module:meta.id,chapter:meta.title,title:token.text.replace(/[`*_]/g,''),anchor:lastAnchor||anchor,text:'',problemId:''};const p=meta.problems.find(p=>p.anchor===lastAnchor);if(p)part.problemId=p.id;lastAnchor=''}else if(part){part.text+=' '+(token.raw||'').replace(/[`*#<>]/g,'')}}if(part)search.push(part)
+ await fs.writeFile(path.join(out, 'content', meta.id + '.json'), JSON.stringify({...meta, body, sectionIds, templates: readTemplates(body)}));
+ let part=null,section=0,lastAnchor='';for(const token of tokens){if(token.type==='html'){const a=token.text.match(/<a\s+id="([^"]+)"/);if(a&&!a[1].startsWith('tpl-'))lastAnchor=a[1]}if(token.type==='heading'){if(part)search.push(part);const anchor=sectionIds[section++];part={module:meta.id,chapter:meta.title,title:token.text.replace(/[`*_]/g,''),anchor:lastAnchor||anchor,text:'',problemId:''};const p=meta.problems.find(p=>p.anchor===lastAnchor);if(p)part.problemId=p.id;lastAnchor=''}else if(part){part.text+=' '+(token.raw||'').replace(/[`*#<>]/g,'')}}if(part)search.push(part)
 }
+function indexTemplates(module, chapter, body) {
+  for (const template of readTemplates(body)) {
+    search.push({module, chapter, title:template.title, anchor:template.anchor,
+      text:'Python 和 Java 对照代码模板 · ' + template.title, problemId:''});
+  }
+}
+indexTemplates('syntax', '双语语法手册', await fs.readFile('syntax.md', 'utf8'));
 await fs.writeFile(path.join(out,'content/index.json'),JSON.stringify(index));await fs.writeFile(path.join(out,'content/search.json'),JSON.stringify(search));
 for(const f of ['index.html','style.css','favicon.svg','syntax.md'])await fs.copyFile(f,path.join(out,f));await fs.copyFile('node_modules/highlight.js/styles/github.css',path.join(out,'highlight.css'));await fs.cp('assets',path.join(out,'assets'),{recursive:true});
 await build({entryPoints:['app.js'],bundle:true,format:'esm',splitting:true,outdir:out,minify:true,target:['es2022'],chunkNames:'chunks/[name]-[hash]',logLevel:'warning'});await fs.writeFile(path.join(out,'.nojekyll'),'');
