@@ -257,5 +257,10 @@
       ],
       "section": "树的术语、遍历和递归契约"
     }
-  ]
+  ],
+  "conceptAnchors": {
+    "为什么走完一条分支后还能继续：调用帧保存“尚未做完的事”": "concept-frames",
+    "什么时候允许合并两次访问：先比较完整状态": "concept-state",
+    "如何设计返回值：把子树压缩成父节点需要的信息": "concept-subtree-summary"
+  }
 }

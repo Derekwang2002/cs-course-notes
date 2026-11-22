@@ -181,5 +181,9 @@
       ],
       "section": "作业 · LC 202 快乐数"
     }
-  ]
+  ],
+  "conceptAnchors": {
+    "哈希相同，为什么还要检查 equals": "concept-07-1",
+    "窗口能只向前走，需要什么单调性": "concept-07-2"
+  }
 }

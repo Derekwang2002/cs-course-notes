@@ -213,5 +213,9 @@
       "section": "单词搜索 II",
       "anchor": "lc-212"
     }
-  ]
+  ],
+  "conceptAnchors": {
+    "为什么 BST 必须继承所有祖先的限制": "concept-05-1",
+    "同一个递归帧，会经历三个不同的时刻": "concept-05-2"
+  }
 }

@@ -15,5 +15,23 @@ await page.goto('http://127.0.0.1:4173/#/lesson/05?view=slides&page=32');await p
 await page.goto('http://127.0.0.1:4173/#/lab');await page.waitForSelector('#lab-next');for(let lab=0;lab<4;lab++){await page.locator(`[data-lab="${lab}"]`).click();let steps=0;while(await page.locator('#lab-next').isEnabled()){await page.click('#lab-next');if(++steps>100)throw Error('Lab infinite')}if(!steps)errors.push('Lab '+lab+' no steps');await page.click('#lab-reset');if(await page.locator('#lab-prev').isEnabled())errors.push('Lab reset failed')};await page.screenshot({path:'.test-output/lab.png'});
 await page.goto('http://127.0.0.1:4173/#/lesson/01');await page.waitForSelector('#mark-complete');await page.click('#mark-complete');if(!await page.locator('#mark-complete').evaluate(b=>b.classList.contains('done')))errors.push('Progress not saved');await page.reload();await page.waitForSelector('#mark-complete');if(!await page.locator('#mark-complete').evaluate(b=>b.classList.contains('done')))errors.push('Progress persistence failed');await page.click('#mark-complete');
 await page.setViewportSize({width:390,height:844});for(const route of ['#/','#/lesson/05','#/problems','#/lab','#/sources','#/syntax']){await page.goto('http://127.0.0.1:4173/'+route);await page.waitForTimeout(400);if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))errors.push('Mobile overflow '+route);await page.screenshot({path:'.test-output/mobile-'+route.replaceAll(/[^a-z0-9]/g,'')+'.png',fullPage:false})}
+// On a narrow screen the expanded diagram keeps its native drawing size and can be panned.
+await page.goto('http://127.0.0.1:4173/#/lesson/01');
+const figure = page.locator('.diagram').nth(1);
+await figure.scrollIntoViewIfNeeded();
+const expand = figure.getByRole('button', {name: '放大图示'});
+await expand.click();
+const viewer = page.locator('#diagram-dialog');
+await viewer.locator('img').evaluate(image => image.decode());
+const viewport = viewer.locator('.diagram-viewport');
+const slider = viewer.getByRole('slider');
+await slider.focus();
+await page.keyboard.press('End');
+if (await viewer.locator('output').innerText() !== '200%') errors.push('Diagram zoom failed');
+const canPan = await viewport.evaluate(element => element.scrollWidth > element.clientWidth);
+if (!canPan) errors.push('Expanded diagram is too small to pan at maximum zoom');
+await page.keyboard.press('Escape');
+if (await viewer.isVisible()) errors.push('Diagram did not close with Escape');
+if (!await expand.evaluate(button => document.activeElement === button)) errors.push('Diagram focus not restored');
 await page.click('#menu-toggle');if(!await page.locator('body').evaluate(el=>el.classList.contains('menu-open')))errors.push('Mobile menu');await page.locator('.chapter-link[href="#/lesson/03"]').click();await page.waitForSelector('.prose');
 await fs.writeFile('.test-output/browser-results.json',JSON.stringify({results,errors},null,2));console.log('ERRORS',JSON.stringify(errors));await browser.close();if(errors.length||results.some(r=>r.diagramErrors.length||r.overflow||r.emptyLinks.length))process.exitCode=1;

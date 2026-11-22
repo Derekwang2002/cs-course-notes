@@ -149,5 +149,9 @@
       ],
       "section": "作业 · LC 274 H 指数"
     }
-  ]
+  ],
+  "conceptAnchors": {
+    "稳定性是相等元素的身份是否被保留": "concept-10-1",
+    "O(n log n) 来自几层，每层做多少工作": "concept-10-2"
+  }
 }

@@ -282,5 +282,10 @@
       ],
       "section": "选做 LC 464 · Can I Win：状态压缩博弈"
     }
-  ]
+  ],
+  "conceptAnchors": {
+    "状态到底是什么：让不同历史拥有相同的后续问题": "concept-state",
+    "转移如何从题意推出：用最后一步划分全部方案": "concept-last-step",
+    "计算顺序与空间压缩：你读到的是哪一轮的值": "concept-update-order"
+  }
 }

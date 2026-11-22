@@ -102,5 +102,9 @@
       ],
       "section": "作业 · LC 399 除法求值"
     }
-  ]
+  ],
+  "conceptAnchors": {
+    "零入度队列空了，为什么能证明有环": "concept-09-1",
+    "visited 为什么要在发现节点时就登记": "concept-09-2"
+  }
 }

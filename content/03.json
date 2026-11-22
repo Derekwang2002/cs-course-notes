@@ -271,5 +271,10 @@
       ],
       "section": "LC 130 · Surrounded Regions：从边界救出安全区域"
     }
-  ]
+  ],
+  "conceptAnchors": {
+    "为什么 FIFO 恰好产生最短路：队列里最多混合相邻两层": "concept-layers",
+    "为什么入队时就标记：发现与展开是两件不同的事": "concept-discovery",
+    "多个起点如何同时搜索：把它们放在同一条距离零前沿": "concept-multi-source"
+  }
 }

@@ -160,7 +160,7 @@
         5,
         6
       ],
-      "section": "递归不是绕圈：先约定子问题的答案"
+      "section": "用三张名牌推导递归与回溯"
     },
     {
       "pages": [
@@ -188,7 +188,7 @@
         18,
         19
       ],
-      "section": "递归不是绕圈：先约定子问题的答案"
+      "section": "用三张名牌推导递归与回溯"
     },
     {
       "pages": [
@@ -377,5 +377,14 @@
       ],
       "section": "总结页补充 · 通用 kSum"
     }
-  ]
+  ],
+  "conceptAnchors": {
+    "从摆名牌推导阶乘": "concept-factorial",
+    "一次调用暂停在哪里？": "concept-call-return",
+    "同一棵选择树可以回答三种问题": "concept-result",
+    "两个子问题何时可以共用答案？": "concept-sufficient-state",
+    "回溯为什么要撤销？": "concept-undo",
+    "为什么要给答案留一份快照？": "concept-snapshot",
+    "把运行时间、栈空间和输出分开计算": "concept-cost"
+  }
 }

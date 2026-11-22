@@ -4,10 +4,19 @@ const files=(await fs.readdir('content')).filter(f=>f.endsWith('.json')).sort(),
 for(const file of files){
  const meta=JSON.parse(await fs.readFile(path.join('content',file),'utf8'));const body=await fs.readFile(path.join('content',meta.id+'.md'),'utf8');
  if(meta.id==='00')meta.group='算法基础';meta.problems=meta.problems.map(p=>({...p,id:/^\d+$/.test(p.id)?'LC '+p.id:p.id}));
- const tokens=marked.lexer(body),headingList=tokens.filter(t=>t.type==='heading').map(t=>t.text.replace(/[`*_]/g,''));
- meta.coverage=meta.coverage.map(c=>({...c,anchor:c.anchor||'section-'+Math.max(0,headingList.indexOf(c.section.replace(/[`*_]/g,'')))}));
- index.push({...meta,characters:body.length});await fs.writeFile(path.join(out,'content',meta.id+'.json'),JSON.stringify({...meta,body}));
- let part=null,section=0,lastAnchor='';for(const token of tokens){if(token.type==='html'){const a=token.text.match(/<a\s+id="([^"]+)"/);if(a)lastAnchor=a[1]}if(token.type==='heading'){if(part)search.push(part);const anchor='section-'+section++;part={module:meta.id,chapter:meta.title,title:token.text.replace(/[`*_]/g,''),anchor:lastAnchor||anchor,text:'',problemId:''};const p=meta.problems.find(p=>p.anchor===lastAnchor);if(p)part.problemId=p.id;lastAnchor=''}else if(part){part.text+=' '+(token.raw||'').replace(/[`*#<>]/g,'')}}if(part)search.push(part)
+ const tokens = marked.lexer(body);
+ const headingList = tokens.filter(token => token.type === 'heading')
+   .map(token => token.text.replace(/[`*_]/g, ''));
+ // Inserting a concept between two published sections must preserve both existing URLs.
+ let numberedSection = 0;
+ const sectionIds = headingList.map(title => meta.conceptAnchors?.[title] || 'section-' + numberedSection++);
+ meta.coverage = meta.coverage.map(item => ({
+   ...item,
+   anchor: item.anchor || sectionIds[headingList.indexOf(item.section.replace(/[`*_]/g, ''))]
+ }));
+ index.push({...meta, characters: body.length});
+ await fs.writeFile(path.join(out, 'content', meta.id + '.json'), JSON.stringify({...meta, body, sectionIds}));
+ let part=null,section=0,lastAnchor='';for(const token of tokens){if(token.type==='html'){const a=token.text.match(/<a\s+id="([^"]+)"/);if(a)lastAnchor=a[1]}if(token.type==='heading'){if(part)search.push(part);const anchor=sectionIds[section++];part={module:meta.id,chapter:meta.title,title:token.text.replace(/[`*_]/g,''),anchor:lastAnchor||anchor,text:'',problemId:''};const p=meta.problems.find(p=>p.anchor===lastAnchor);if(p)part.problemId=p.id;lastAnchor=''}else if(part){part.text+=' '+(token.raw||'').replace(/[`*#<>]/g,'')}}if(part)search.push(part)
 }
 await fs.writeFile(path.join(out,'content/index.json'),JSON.stringify(index));await fs.writeFile(path.join(out,'content/search.json'),JSON.stringify(search));
 for(const f of ['index.html','style.css','favicon.svg','syntax.md'])await fs.copyFile(f,path.join(out,f));await fs.copyFile('node_modules/highlight.js/styles/github.css',path.join(out,'highlight.css'));await fs.cp('assets',path.join(out,'assets'),{recursive:true});

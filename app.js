@@ -12,10 +12,10 @@ const readStore=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{
 const saveStore=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
 let index=[],searchIndex=[],currentId='',routeVersion=0,completed=new Set(readStore('cs-notes-completed',[])),dataCache=new Map(),tocObserver,diagramObserver;
 const lessonURL=(id,section='')=>`#/lesson/${id}${section?'?section='+encodeURIComponent(section):''}`;
-const codeMap=new Map();let codeNum=0,diagramNum=0,headings=[];
+const codeMap=new Map();let codeNum=0,diagramNum=0,headings=[],sectionIds=[];
 const renderer=new marked.Renderer();
 renderer.code=({text,lang})=>{const language=(lang||'text').split(' ')[0];if(language==='mermaid'){return `<figure class="diagram" data-mermaid="${esc(text)}" id="diagram-${++diagramNum}"><span class="diagram-placeholder">图示 · 滚动到此处查看</span></figure>`}const id='code-'+(++codeNum);codeMap.set(id,text);const highlighted=hljs.getLanguage(language)?hljs.highlight(text,{language}).value:esc(text);return `<div class="code-block"><div class="code-top"><span>${esc(language.toUpperCase())}</span><button class="copy-button" data-copy="${id}">复制代码</button></div><pre><code class="hljs language-${esc(language)}">${highlighted}</code></pre></div>`};
-renderer.heading=function({tokens,depth,text}){const plain=text.replace(/<[^>]*>/g,'').replace(/[`*_]/g,'');const id='section-'+headings.length;headings.push({id,title:plain,depth});return `<h${depth} id="${id}">${this.parser.parseInline(tokens)}</h${depth}>`};
+renderer.heading=function({tokens,depth,text}){const plain=text.replace(/<[^>]*>/g,'').replace(/[`*_]/g,'');const id=sectionIds[headings.length] || 'section-'+headings.length;headings.push({id,title:plain,depth});return `<h${depth} id="${id}">${this.parser.parseInline(tokens)}</h${depth}>`};
 renderer.table=function(token){return `<div class="table-scroll">${marked.Renderer.prototype.table.call(this,token)}</div>`};
 marked.use({renderer,gfm:true,breaks:false});
 function toast(msg){$('#toast').textContent=msg;$('#toast').classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').classList.remove('show'),2200)}
@@ -26,13 +26,100 @@ function notebook(){return `<svg class="notebook-mark" viewBox="0 0 170 130" fil
 function home(){breadcrumb('课程总览');let last=readStore('cs-notes-last','01');let resume=index.find(m=>m.id===last)||index[0];const pages=index.reduce((s,m)=>s+m.sourcePages,0),problems=index.reduce((s,m)=>s+m.problems.length,0);let group='';$('#main').innerHTML=`<div class="home"><div class="home-head"><div><div class="eyebrow">THE COMPUTER SCIENCE NOTEBOOK</div><h1>计算机学习笔记</h1><p class="intro">从一个递归调用，到一台计算机如何工作。<br>把课件里的思路展开，沿着图解、代码和题目，一步一步读懂。</p></div>${notebook()}</div><div class="stats"><div class="stat"><strong>${index.length}</strong><span>课程章节</span></div><div class="stat"><strong>${pages.toLocaleString()}</strong><span>课件页面</span></div><div class="stat"><strong>${problems}</strong><span>题目讲解</span></div><div class="stat"><strong>Java</strong><span>主要示例语言</span></div></div><div class="continue-box"><div><div class="label">${readStore('cs-notes-last',null)?'CONTINUE LEARNING · 接着读':'A GOOD PLACE TO START · 从这里开始'}</div><h2>${esc(resume.title)}</h2><p>${esc(resume.subtitle)}</p></div><a class="button" href="${lessonURL(resume.id)}">阅读讲义 <span>↗</span></a></div><div class="section-heading"><h2>课程目录</h2><small>由浅入深 · 可按需阅读</small></div>${index.map(m=>{let g=m.group!==group?`<div class="course-group"><div class="group-heading">${esc(m.group)}</div></div>`:'';group=m.group;return g+`<a class="course-row" href="${lessonURL(m.id)}"><span class="course-number">${m.id.toUpperCase()}</span><div><h3>${esc(m.title)} ${completed.has(m.id)?'<span class="tag">✓ 已学</span>':''}</h3><p>${esc(m.topics.slice(0,4).join(' · '))}</p></div><span class="meta">${m.sourcePages} 页课件${m.problems.length?' · '+m.problems.length+' 道题':''}</span><span class="arrow">↗</span></a>`}).join('')}<div class="quick-links"><a class="quick-link" href="#/lab"><h3>让算法动起来</h3><p>观察调用栈、队列和状态数组，亲手推进每一步。</p><span>打开算法实验室 →</span></a><a class="quick-link" href="#/syntax"><h3>读懂每一行 Java</h3><p>泛型、比较器、集合 API、位运算与并发语义。</p><span>打开语法手册 →</span></a></div></div>`}
 async function loadLesson(id){if(dataCache.has(id))return dataCache.get(id);const r=await fetch(`./content/${id}.json`);if(!r.ok)throw new Error('讲义读取失败');const d=await r.json();dataCache.set(id,d);return d}
 function formatPages(pages){if(!pages?.length)return '';const p=[...new Set(pages)].sort((a,b)=>a-b),ranges=[];let start=p[0],end=p[0];for(let i=1;i<=p.length;i++){if(p[i]===end+1)end=p[i];else{ranges.push(start===end?`${start}`:`${start}–${end}`);start=end=p[i]}}return ranges.join('、')}
-function markdown(body){codeNum=0;diagramNum=0;codeMap.clear();headings=[];return marked.parse(body)}
+function markdown(body,ids=[]){sectionIds=ids;codeNum=0;diagramNum=0;codeMap.clear();headings=[];return marked.parse(body)}
 function enrichMarkdown(){ $$('.prose a[href^="http"]').forEach(a=>{a.target='_blank';a.rel='noopener noreferrer'});$$('.copy-button').forEach(b=>b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(codeMap.get(b.dataset.copy));const orig=b.textContent;b.textContent='已复制';setTimeout(()=>b.textContent=orig,1600)}catch{toast('无法自动复制，请选中代码复制')}}));$$('.prose a[href^="#"]').forEach(a=>{const raw=a.getAttribute('href');if(!raw.startsWith('#/'))a.onclick=e=>{const el=document.getElementById(decodeURIComponent(raw.slice(1)));if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth'})}}});renderDiagrams();trackHeadings()}
 let mermaidPromise;
 function getMermaid(){return mermaidPromise??=(async()=>{const {default:m}=await import('mermaid');m.initialize({startOnLoad:false,securityLevel:'strict',theme:'base',fontFamily:'PingFang SC, Avenir Next, sans-serif',themeVariables:{primaryColor:'#edf3e7',primaryTextColor:'#33482d',primaryBorderColor:'#91a67f',lineColor:'#7e986a',secondaryColor:'#f4f1e6',tertiaryColor:'#f7f8f4',fontSize:'13px'},flowchart:{htmlLabels:false,useMaxWidth:true,curve:'basis'}});return m})()}
-function renderDiagrams(){diagramObserver?.disconnect();const queue=[];let busy=false;const process=async()=>{if(busy)return;busy=true;while(queue.length){const el=queue.shift();if(!el.isConnected)continue;try{const m=await getMermaid();const {svg}=await m.render('svg-'+el.id+'-'+Date.now(),el.dataset.mermaid);if(el.isConnected){el.innerHTML=svg;el.dataset.rendered='true'}}catch(e){el.innerHTML=`<pre class="diagram-error">${esc(el.dataset.mermaid)}</pre>`;el.dataset.error='true';console.error('Diagram failed',el.id,e)}}busy=false};diagramObserver=new IntersectionObserver(entries=>{entries.filter(e=>e.isIntersecting).forEach(e=>{diagramObserver.unobserve(e.target);queue.push(e.target)});process()},{rootMargin:'700px'});$$('.diagram').forEach(d=>diagramObserver.observe(d))}
+const diagramDialog = $('#diagram-dialog');
+const diagramImage = diagramDialog.querySelector('img');
+const diagramScale = $('#diagram-scale');
+let diagramUrl;
+let naturalDiagramWidth = 0;
+
+function resizeDiagram() {
+  const percent = Number(diagramScale.value);
+  diagramImage.style.width = naturalDiagramWidth * percent / 100 + 'px';
+  diagramDialog.querySelector('output').textContent = percent + '%';
+}
+
+function showDiagram(svg) {
+  naturalDiagramWidth = svg.viewBox.baseVal.width;
+  const exported = svg.cloneNode(true);
+  exported.setAttribute('width', naturalDiagramWidth);
+  exported.setAttribute('height', svg.viewBox.baseVal.height);
+  exported.style.maxWidth = 'none';
+  const markup = new XMLSerializer().serializeToString(exported);
+  diagramUrl = URL.createObjectURL(new Blob([markup], {type: 'image/svg+xml'}));
+  diagramImage.src = diagramUrl;
+  diagramImage.alt = svg.querySelector('title')?.textContent || '课程图示放大图';
+  diagramScale.value = '125';
+  resizeDiagram();
+  diagramDialog.showModal();
+  diagramDialog.querySelector('.diagram-viewport').scrollTo(0, 0);
+}
+
+diagramScale.addEventListener('input', resizeDiagram);
+diagramDialog.querySelector('.diagram-close').onclick = () => diagramDialog.close();
+diagramDialog.addEventListener('close', () => {
+  diagramImage.removeAttribute('src');
+  URL.revokeObjectURL(diagramUrl);
+});
+window.addEventListener('hashchange', () => {
+  if (diagramDialog.open) diagramDialog.close();
+});
+
+function addDiagramControl(figure) {
+  const svg = figure.querySelector('svg');
+  const caption = document.createElement('figcaption');
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'diagram-expand';
+  button.textContent = '放大图示';
+  button.setAttribute('aria-haspopup', 'dialog');
+  button.onclick = () => showDiagram(svg);
+  svg.addEventListener('click', () => showDiagram(svg));
+  caption.append(button);
+  figure.append(caption);
+}
+
+function renderDiagrams() {
+  diagramObserver?.disconnect();
+  const queue = [];
+  let busy = false;
+  async function renderQueue() {
+    if (busy) return;
+    busy = true;
+    while (queue.length) {
+      const figure = queue.shift();
+      if (!figure.isConnected) continue;
+      try {
+        const mermaid = await getMermaid();
+        const {svg} = await mermaid.render('svg-' + figure.id + '-' + Date.now(), figure.dataset.mermaid);
+        if (figure.isConnected) {
+          figure.innerHTML = svg;
+          addDiagramControl(figure);
+          figure.dataset.rendered = 'true';
+        }
+      } catch (error) {
+        figure.innerHTML = `<pre class="diagram-error">${esc(figure.dataset.mermaid)}</pre>`;
+        figure.dataset.error = 'true';
+        console.error('Diagram failed', figure.id, error);
+      }
+    }
+    busy = false;
+  }
+  diagramObserver = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      diagramObserver.unobserve(entry.target);
+      queue.push(entry.target);
+    }
+    renderQueue();
+  }, {rootMargin: '700px'});
+  $$('.diagram').forEach(figure => diagramObserver.observe(figure));
+}
 function trackHeadings(){tocObserver?.disconnect();tocObserver=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){$$('.lesson-toc a').forEach(a=>a.classList.toggle('active',a.dataset.target===e.target.id))}})},{rootMargin:'-80px 0px -70% 0px'});$$('.prose h2').forEach(h=>tocObserver.observe(h));$$('.lesson-toc a[data-target]').forEach(a=>a.onclick=e=>{e.preventDefault();document.getElementById(a.dataset.target)?.scrollIntoView({behavior:'smooth'})})}
-async function lesson(id,params,version){const meta=index.find(m=>m.id===id);if(!meta){notFound();return}const d=await loadLesson(id);if(version!==routeVersion)return;saveStore('cs-notes-last',id);breadcrumb(meta.title);const slides=params.get('view')==='slides';const body=slides?'':markdown(d.body);const position=index.findIndex(m=>m.id===id),prev=index[position-1],next=index[position+1];$('#main').innerHTML=`<div class="lesson-layout"><article class="lesson-main"><header class="lesson-header"><div class="eyebrow">CHAPTER ${id.toUpperCase()} <span> / </span>${esc(meta.group)}</div><h1>${esc(meta.title)}</h1><p class="intro">${esc(meta.subtitle)}</p><div class="lesson-meta"><span>◷ ${Math.max(5,Math.ceil((d.body?.length||0)/450))} 分钟精读</span><span>◫ ${meta.sourcePages} 页课件</span><span>⌘ ${meta.problems.length} 道题目</span><span>中文讲解 · Java 示例</span></div></header><div class="lesson-controls"><nav class="segmented"><a class="${!slides?'active':''}" href="${lessonURL(id)}">详细讲解</a><a class="${slides?'active':''}" href="${lessonURL(id)}?view=slides">原始课件</a></nav><button id="mark-complete" class="complete-button ${completed.has(id)?'done':''}">${completed.has(id)?'✓ 已学完':'○ 标记已学'}</button></div>${slides?'<div id="slide-view"></div>':`<div class="prose">${body}</div>`}<nav class="lesson-next">${prev?`<a href="${lessonURL(prev.id)}"><small>← 上一章</small>${esc(prev.title)}</a>`:'<span></span>'}${next?`<a href="${lessonURL(next.id)}"><small>下一章 →</small>${esc(next.title)}</a>`:'<a href="#/">返回课程总览 →</a>'}</nav></article><aside class="lesson-toc" aria-label="本章目录"><div class="toc-title">${slides?'课件导航':'本章内容'}</div>${slides?`<a href="${lessonURL(id)}">← 返回详细讲解</a><a href="#/sources">查看全部课件</a>`:headings.filter(h=>h.depth===2).map(h=>`<a href="${lessonURL(id,h.id)}" data-target="${h.id}">${esc(h.title)}</a>`).join('')}<a class="toc-back" href="#/problems">⌘ 题目索引 →</a></aside></div>`;$('#mark-complete').onclick=()=>{if(completed.has(id))completed.delete(id);else completed.add(id);saveStore('cs-notes-completed',[...completed]);const b=$('#mark-complete');b.classList.toggle('done',completed.has(id));b.textContent=completed.has(id)?'✓ 已学完':'○ 标记已学';nav('lesson');toast(completed.has(id)?'已记录学习进度':'已取消完成标记')};if(slides)slideView(meta,d,params);else{enrichMarkdown();const section=params.get('section');if(section)setTimeout(()=>document.getElementById(section)?.scrollIntoView({behavior:'instant'}),60)}}
+async function lesson(id,params,version){const meta=index.find(m=>m.id===id);if(!meta){notFound();return}const d=await loadLesson(id);if(version!==routeVersion)return;saveStore('cs-notes-last',id);breadcrumb(meta.title);const slides=params.get('view')==='slides';const body=slides?'':markdown(d.body,d.sectionIds);const position=index.findIndex(m=>m.id===id),prev=index[position-1],next=index[position+1];$('#main').innerHTML=`<div class="lesson-layout"><article class="lesson-main"><header class="lesson-header"><div class="eyebrow">CHAPTER ${id.toUpperCase()} <span> / </span>${esc(meta.group)}</div><h1>${esc(meta.title)}</h1><p class="intro">${esc(meta.subtitle)}</p><div class="lesson-meta"><span>◷ ${Math.max(5,Math.ceil((d.body?.length||0)/450))} 分钟精读</span><span>◫ ${meta.sourcePages} 页课件</span><span>⌘ ${meta.problems.length} 道题目</span><span>中文讲解 · Java 示例</span></div></header><div class="lesson-controls"><nav class="segmented"><a class="${!slides?'active':''}" href="${lessonURL(id)}">详细讲解</a><a class="${slides?'active':''}" href="${lessonURL(id)}?view=slides">原始课件</a></nav><button id="mark-complete" class="complete-button ${completed.has(id)?'done':''}">${completed.has(id)?'✓ 已学完':'○ 标记已学'}</button></div>${slides?'<div id="slide-view"></div>':`<div class="prose">${body}</div>`}<nav class="lesson-next">${prev?`<a href="${lessonURL(prev.id)}"><small>← 上一章</small>${esc(prev.title)}</a>`:'<span></span>'}${next?`<a href="${lessonURL(next.id)}"><small>下一章 →</small>${esc(next.title)}</a>`:'<a href="#/">返回课程总览 →</a>'}</nav></article><aside class="lesson-toc" aria-label="本章目录"><div class="toc-title">${slides?'课件导航':'本章内容'}</div>${slides?`<a href="${lessonURL(id)}">← 返回详细讲解</a><a href="#/sources">查看全部课件</a>`:headings.filter(h=>h.depth===2).map(h=>`<a href="${lessonURL(id,h.id)}" data-target="${h.id}">${esc(h.title)}</a>`).join('')}<a class="toc-back" href="#/problems">⌘ 题目索引 →</a></aside></div>`;$('#mark-complete').onclick=()=>{if(completed.has(id))completed.delete(id);else completed.add(id);saveStore('cs-notes-completed',[...completed]);const b=$('#mark-complete');b.classList.toggle('done',completed.has(id));b.textContent=completed.has(id)?'✓ 已学完':'○ 标记已学';nav('lesson');toast(completed.has(id)?'已记录学习进度':'已取消完成标记')};if(slides)slideView(meta,d,params);else{enrichMarkdown();const section=params.get('section');if(section)setTimeout(()=>document.getElementById(section)?.scrollIntoView({behavior:'instant'}),60)}}
 function slideView(meta,d,params){const page=Math.max(1,Math.min(meta.sourcePages,Number(params.get('page'))||1));const route=n=>`${lessonURL(meta.id)}?view=slides&page=${n}`;const related=meta.coverage.filter(c=>c.pages.includes(page));const img=`./assets/slides/${meta.id}/${String(page).padStart(3,'0')}.jpg`;$('#slide-view').innerHTML=`<div class="slide-toolbar"><a class="button secondary ${page===1?'disabled':''}" href="${route(Math.max(1,page-1))}" aria-label="上一页">← 上一页</a><label>第 <input id="slide-number" type="number" value="${page}" min="1" max="${meta.sourcePages}" aria-label="课件页码"> / ${meta.sourcePages} 页</label><a class="button secondary" href="${route(Math.min(meta.sourcePages,page+1))}" aria-label="下一页">下一页 →</a></div><img class="slide-image" src="${img}" alt="${esc(meta.source)} 第 ${page} 页" width="1440" loading="eager"><p class="slide-caption">${esc(meta.source)} · 第 ${page} 页 · 点击图片放大</p><div class="coverage"><h3>这一页在讲什么</h3>${related.map(c=>`<a href="${lessonURL(meta.id,c.anchor||findSectionId(d.body,c.section))}">${esc(c.section)} →</a><p>覆盖课件第 ${formatPages(c.pages)} 页</p>`).join('')||'<p>请结合本章详细讲解阅读。</p>'}</div><details><summary>跳转到任意页</summary><div class="page-grid">${Array.from({length:meta.sourcePages},(_,i)=>`<a class="${i+1===page?'active':''}" href="${route(i+1)}">${i+1}</a>`).join('')}</div></details>`;$('#slide-number').onchange=e=>{location.hash=route(Math.max(1,Math.min(meta.sourcePages,Number(e.target.value)||1)))};$('.slide-image').onclick=()=>{$('#image-dialog img').src=img;$('#image-dialog img').alt=`${meta.title} 第${page}页`;$('#image-dialog').showModal()}}
 function findSectionId(body,title){const all=[...body.matchAll(/^#{1,6}\s+(.+)$/gm)];let i=all.findIndex(m=>m[1].replace(/[`*_]/g,'')===title.replace(/[`*_]/g,''));if(i<0)i=all.findIndex(m=>m[1].includes(title)||title.includes(m[1]));return 'section-'+Math.max(0,i)}
 function problems(){breadcrumb('题目索引');const total=index.reduce((s,m)=>s+m.problems.length,0);$('#main').innerHTML=`<div class="catalog"><div class="eyebrow">PROBLEM INDEX</div><h1>题目索引</h1><p class="intro">${total} 条题目讲解，按课件章节归档。阅读题意、推导过程、逐步示例与 Java 实现。</p><div class="catalog-search"><input id="problem-query" type="search" placeholder="题号、题名或关键词…" aria-label="筛选题目"><select id="problem-chapter" aria-label="筛选章节"><option value="">全部章节</option>${index.filter(m=>m.problems.length).map(m=>`<option value="${m.id}">${m.id} · ${esc(m.title)}</option>`).join('')}</select></div><div id="problem-count" class="tag"></div><div id="problem-list" class="problem-list"></div></div>`;const update=()=>{const q=$('#problem-query').value.toLowerCase().trim(),chapter=$('#problem-chapter').value;const all=index.filter(m=>!chapter||m.id===chapter).flatMap(m=>m.problems.map(p=>({...p,module:m}))).filter(p=>`${p.id} ${p.title} ${p.module.title}`.toLowerCase().includes(q));$('#problem-count').textContent=`${all.length} 条结果`;$('#problem-list').innerHTML=all.length?all.map(p=>`<a class="problem-row" href="${lessonURL(p.module.id,p.anchor)}"><span class="problem-id">${esc(p.id)}</span><span class="problem-title">${esc(p.title)}</span><span class="problem-chapter">${esc(p.module.title)}</span><span class="tag">↗</span></a>`).join(''):'<div class="empty">没有找到相关题目，试试题号或英文题名。</div>'};$('#problem-query').oninput=update;$('#problem-chapter').onchange=update;update()}
